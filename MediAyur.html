@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>MediAyur - AI Chatbot</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Inter', sans-serif;
+      background: #e6f4ea; /* soft green background */
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      color: #1f3d16; /* dark green text */
+    }
+    header {
+      width: 100%;
+      background: linear-gradient(135deg, #4caf50, #2e7d32); /* green gradient */
+      color: white;
+      padding: 5rem 1rem 6rem;
+      text-align: center;
+      box-shadow: 0 4px 15px rgba(46, 125, 50, 0.4);
+      position: relative;
+    }
+    header h1 {
+      font-size: 3rem;
+      font-weight: 900;
+      margin: 0 0 0.5rem;
+      text-shadow: 0 2px 6px rgba(0,0,0,0.3);
+    }
+    header p {
+      font-size: 1.25rem;
+      font-weight: 500;
+      margin: 0 auto 1.5rem;
+      max-width: 600px;
+      text-shadow: 0 1px 4px rgba(0,0,0,0.25);
+    }
+    .back-link {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      margin-bottom: 2rem;
+      color: #c8e6c9;
+      font-weight: 600;
+      font-size: 1rem;
+      padding: 0.75rem 1.5rem;
+      border-radius: 9999px;
+      background: rgba(255 255 255 / 0.15);
+      text-decoration: none;
+      transition: background-color 0.3s ease, transform 0.3s ease;
+      gap: 0.5rem;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    .back-link:hover {
+      background: rgba(255 255 255 / 0.3);
+      transform: translateY(-2px);
+    }
+    .back-link svg {
+      width: 20px;
+      height: 20px;
+      stroke: currentColor;
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      fill: none;
+    }
+    main.chat-container {
+      background: white;
+      max-width: 1000px;
+      width: 100%;
+      margin: -6rem auto 3rem;
+      border-radius: 20px;
+      box-shadow: 0 20px 40px rgba(46, 125, 50, 0.15);
+      padding: 2rem 2.5rem 3rem;
+      text-align: center;
+      position: relative;
+      color: #1f3d16;
+      z-index: 10;
+    }
+    main.chat-container h2 {
+      font-size: 2.25rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+      color: #2e7d32;
+    }
+    main.chat-container p {
+      font-size: 1.125rem;
+      color: #475569;
+      margin-bottom: 2rem;
+      max-width: 700px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .chatbot-wrapper {
+      width: 100%;
+      height: 700px;
+      border-radius: 15px;
+      overflow: hidden;
+      box-shadow: 0 10px 30px rgba(46, 125, 50, 0.2);
+      border: 2px solid #2e7d32;
+    }
+    iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
+    .disclaimer {
+      margin-top: 1.75rem;
+      font-size: 0.875rem;
+      color: #64748b;
+      font-style: italic;
+    }
+    /* Responsive */
+    @media (max-width: 768px) {
+      header {
+        padding: 3rem 1rem 4rem;
+      }
+      header h1 {
+        font-size: 2.25rem;
+      }
+      header p {
+        font-size: 1rem;
+      }
+      main.chat-container {
+        margin: -4rem 1rem 2rem;
+        padding: 1.5rem 1.5rem 2rem;
+      }
+      .chatbot-wrapper {
+        height: 500px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <a href="index.html" class="back-link" aria-label="Back to home">
+      <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+        <polyline points="15 18 9 12 15 6"></polyline>
+      </svg>
+      Back to Home
+    </a>
+    <h1>MediAyur</h1>
+    <p>AI-powered Ayurvedic guidance providing natural, holistic health advice.</p>
+  </header>
+
+  <main class="chat-container" role="main" aria-label="MediAyur AI Chatbot">
+    <h2>AI Chatbot Assistance</h2>
+    <p>Engage with the MediAyur Chatbot to get personalized, AI-driven Ayurvedic advice. Responses focus on natural and informational guidance only.</p>
+    <div class="chatbot-wrapper">
+      <iframe
+        src="https://www.chatbase.co/chatbot-iframe/kuwogRH-m_AosDnv-NdFh"
+        width="100%"
+        style="height: 100%; min-height: 700px"
+        frameborder="0"
+        title="MediAyur AI Chatbot"
+        aria-label="MediAyur AI Chatbot iframe"
+      ></iframe>
+    </div>
+    <div class="disclaimer">
+      <small>Disclaimer: This bot provides general Ayurvedic information. Consult a practitioner for personalized care.</small>
+    </div>
+  </main>
+</body>
+</html>

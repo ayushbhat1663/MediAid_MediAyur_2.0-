@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Medical Bots Portal</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    /* Split container for bots */
+    .bots-container {
+      max-width: 1200px;
+      margin: 2rem auto 1rem auto;
+      padding: 0 1rem;
+      display: flex;
+      gap: 2rem;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    .bot-card {
+      background: linear-gradient(135deg, #4a90e2 0%, #50e3c2 100%);
+      border-radius: 20px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+      color: white;
+      flex: 1 1 45%;
+      max-width: 45%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 2.5rem;
+      position: relative;
+      text-align: center;
+    }
+    .bot-card.right {
+      background: linear-gradient(135deg, #2d7d32 0%, #66bb6a 100%);
+    }
+    .bot-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      opacity: 0.3;
+      pointer-events: none;
+      border-radius: 20px;
+      z-index: 0;
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+    }
+    .bot-card.left::before {
+      background-image: url('https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/f8e817ed-faa7-480e-8dc7-1232365c7e31.png');
+    }
+    .bot-card.right::before {
+      background-image: url('https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/3636ecc7-611a-4d64-81c2-815372a963bf.png');
+    }
+    .bot-content {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .bot-image {
+      width: 280px;
+      height: 280px;
+      object-fit: cover;
+      border-radius: 15px;
+      margin-bottom: 1.5rem;
+      flex-shrink: 0;
+    }
+    h1.bot-title {
+      font-size: 3rem;
+      font-weight: 800;
+      margin-bottom: 1rem;
+      text-shadow: 0 2px 6px rgba(0,0,0,0.3);
+    }
+    p.bot-desc {
+      font-size: 1.125rem;
+      line-height: 1.6;
+      margin-bottom: 1.5rem;
+      text-shadow: 0 1px 3px rgba(0,0,0,0.2);
+      max-width: 90%;
+    }
+    button.launch-btn {
+      background: white;
+      color: inherit;
+      font-weight: 700;
+      padding: 0.75rem 1.5rem;
+      border-radius: 9999px;
+      box-shadow: 0 8px 20px rgba(255 255 255 / 0.7);
+      border: none;
+      cursor: pointer;
+      transition: background-color 0.3s ease, transform 0.3s ease;
+      font-size: 1.125rem;
+      width: 180px;
+    }
+    .bot-card.left button.launch-btn {
+      color: #2563eb;
+    }
+    .bot-card.right button.launch-btn {
+      color: #2d7d32;
+    }
+    button.launch-btn:hover {
+      background-color: #e0e7ff;
+      transform: scale(1.05);
+    }
+    .bot-card.right button.launch-btn:hover {
+      background-color: #c8e6c9;
+    }
+    .bot-footer {
+      margin-top: 2rem;
+      font-size: 0.875rem;
+      opacity: 0.8;
+    }
+    /* Chat sections */
+    .chat-section {
+      display: none;
+      max-width: 800px;
+      margin: 2rem auto 0 auto;
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 20px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+      padding: 2rem;
+    }
+    .chat-messages {
+      min-height: 300px;
+      max-height: 500px;
+      overflow-y: auto;
+      border: 1px solid #ddd;
+      border-radius: 10px;
+      padding: 1.25rem;
+      background: #f8f9fa;
+      margin-bottom: 1.25rem;
+    }
+    .message {
+      margin-bottom: 0.9rem;
+      padding: 0.75rem 1rem;
+      border-radius: 15px;
+      font-size: 1rem;
+    }
+    .user {
+      background: #007bff;
+      color: white;
+      margin-left: auto;
+      max-width: 70%;
+    }
+    .bot {
+      background: #e9ecef;
+      color: #333;
+      max-width: 70%;
+    }
+    .medi-aid-bg {
+      background: linear-gradient(135deg, #e3f2fd 0%, #90caf9 100%);
+    }
+    .medi-ayur-bg {
+      background: linear-gradient(135deg, #e8f5e8 0%, #c8e6c8 100%);
+    }
+    /* Section containers */
+    #aboutUs, #creators, #vision {
+      max-width: 900px;
+      margin: 3rem auto 5rem auto;
+      background: white;
+      border-radius: 20px;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+      padding: 2.5rem 3rem;
+      font-family: 'Inter', sans-serif;
+      color: #374151;
+      opacity: 1;
+      transform: translateY(0);
+      display: block;
+    }
+    #aboutUs h3, #creators h3, #vision h3 {
+      font-size: 2.25rem;
+      font-weight: 800;
+      margin-bottom: 1.5rem;
+      color: #2563eb;
+      text-align: center;
+      text-shadow: 0 2px 6px rgba(37, 99, 235, 0.5);
+    }
+    #aboutUs p, #creators p, #vision p {
+      font-size: 1.125rem;
+      line-height: 1.7;
+      margin-bottom: 1.25rem;
+      color: #1e293b;
+    }
+    /* Creators container vertical stack */
+    #creators .creator-box {
+      background: linear-gradient(135deg, #dbeafe, #bfdbfe);
+      border-radius: 15px;
+      padding: 1.25rem 2rem;
+      max-width: 700px;
+      box-shadow: 0 8px 20px rgba(59, 130, 246, 0.3);
+      transition: transform 0.3s ease;
+      margin: 1rem auto;
+    }
+    #creators .creator-box:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 12px 30px rgba(59, 130, 246, 0.5);
+    }
+    /* Comment / Review Section */
+    .comment-section {
+      max-width: 700px;
+      margin: 0 auto 4rem auto;
+      background: white;
+      padding: 1.5rem 2rem;
+      border-radius: 15px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+      font-family: 'Inter', sans-serif;
+      color: #374151;
+    }
+    .comment-section h4 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+      color: #2563eb;
+      text-align: center;
+      text-shadow: 0 2px 6px rgba(37, 99, 235, 0.5);
+    }
+    .comment-section textarea,
+    .comment-section input[type="text"] {
+      width: 100%;
+      min-height: 100px;
+      border: 1px solid #d1d5db;
+      border-radius: 10px;
+      padding: 0.75rem 1rem;
+      font-size: 1rem;
+      resize: vertical;
+      transition: border-color 0.3s ease;
+      margin-bottom: 1rem;
+      box-sizing: border-box;
+    }
+    .comment-section textarea:focus,
+    .comment-section input[type="text"]:focus {
+      outline: none;
+      border-color: #3b82f6;
+      box-shadow: 0 0 5px #3b82f6;
+    }
+    .comment-section button {
+      background-color: #3b82f6;
+      color: white;
+      font-weight: 600;
+      padding: 0.75rem 1.5rem;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+      display: block;
+      margin-left: auto;
+      margin-right: auto;
+      font-size: 1rem;
+    }
+    .comment-section button:hover {
+      background-color: #2563eb;
+    }
+    .comment-list {
+      margin-top: 1.5rem;
+      max-height: 250px;
+      overflow-y: auto;
+      border-top: 1px solid #e5e7eb;
+      padding-top: 0.75rem;
+    }
+    .comment-item {
+      background: #f0f9ff;
+      border-radius: 10px;
+      padding: 0.75rem 1rem;
+      margin-bottom: 0.75rem;
+      font-size: 1rem;
+      color: #1e293b;
+      box-shadow: 0 2px 6px rgba(59, 130, 246, 0.15);
+      white-space: pre-wrap;
+    }
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+      .bots-container {
+        flex-direction: column;
+        align-items: center;
+      }
+      .bot-card {
+        max-width: 100%;
+        flex: 1 1 100%;
+      }
+      #creators .creator-box {
+        max-width: 100%;
+      }
+    }
+  </style>
+</head>
+<body class="bg-gray-100">
+  <main class="bots-container">
+    <!-- Left Side: MediAid -->
+    <section class="bot-card left" aria-label="MediAid">
+      <div class="bot-content">
+        <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/c826515b-e6b8-48c0-b656-091afe7f7b80.png" alt="Confident male doctor in white coat" class="bot-image" />
+        <h1 class="bot-title">MediAid</h1>
+        <p class="bot-desc">AI-powered medical guidance providing quick, reliable responses to your health questions.</p>
+        <button onclick="loadPage('MediAid.html')" class="launch-btn">Launch MediAid</button>
+        <div class="bot-footer">© 2025 MediAid Inc. Privacy Policy | Terms of Service</div>
+      </div>
+    </section>
+
+    <!-- Right Side: MediAyur -->
+    <section class="bot-card right" aria-label="MediAyur">
+      <div class="bot-content">
+        <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/d795a1b5-da45-4e0e-b2e2-ff4f457e4c7b.png" alt="Ayurvedic natural elements" class="bot-image" />
+        <h1 class="bot-title">MediAyur</h1>
+        <p class="bot-desc">Discover the power of Ayurvedic medicine with natural remedies, dosha analysis, dietary recommendations, and age-old wisdom for balanced health and wellness.</p>
+        <button onclick="loadPage('MediAyur.html')" class="launch-btn">Launch MediAyur</button>
+        <div class="bot-footer">© 2025 MediAyur Inc. Privacy Policy | Terms of Service</div>
+      </div>
+    </section>
+  </main>
+
+<!-- Action Buttons -->
+<div class="flex justify-center items-center gap-6 py-6 bg-gray-200">
+
+  <!-- Hospital Finder Button -->
+  <button onclick="loadPage('map.html')" 
+    class="text-white bg-red-500 hover:bg-red-600 px-10 py-3 rounded-full font-semibold shadow-lg">
+    Find Nearby Hospitals
+  </button>
+
+  <!-- Medicine Buying Button -->
+  <button onclick="loadPage('medicine.html')" 
+    class="text-white bg-blue-600 hover:bg-blue-700 px-10 py-3 rounded-full font-semibold shadow-lg">
+    Open Medicine Store
+  </button>
+
+  <!-- Call Assistant Button -->
+  <button onclick="loadPage('CallAssistant.html')" 
+    class="text-white bg-green-600 hover:bg-green-700 px-10 py-3 rounded-full font-semibold shadow-lg">
+    Call Assistant
+  </button>
+
+</div>
+
+  <!-- Content iframe to load external pages -->
+  <div style="max-width: 1000px; margin: 2rem auto; border-radius: 20px; overflow: hidden; box-shadow: 0 20px 40px rgba(0,0,0,0.1);">
+    <iframe id="contentFrame" src="" style="width: 100%; height: 700px; border: none;" title="Content Frame"></iframe>
+  </div>
+
+
+  <!-- Integrated Chat Section -->
+  <section id="mediAidChat" class="chat-section medi-aid-bg hidden" role="region" aria-label="MediAid Chat">
+    <div class="text-center mb-4">
+      <h2 class="text-3xl font-bold text-gray-800">MediAid</h2>
+      <p class="text-gray-600">AI-powered medical assistance</p>
+    </div>
+    <div id="mediAidMessages" class="chat-messages" tabindex="0"></div>
+    <form id="mediAidForm" class="flex" aria-label="Send message to MediAid">
+      <textarea id="mediAidInput" class="flex-grow border border-gray-300 rounded-l-lg px-4 py-2 focus:outline-none focus:ring focus:ring-blue-300" placeholder="Type your medical question..." rows="1" required></textarea>
+      <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white px-6 py-2 rounded-r-lg font-semibold">Send</button>
+    </form>
+    <div class="mt-4">
+      <small class="text-gray-500">Disclaimer: This bot provides general advice. Consult a doctor for personalized care.</small>
+    </div>
+  </section>
+
+  <section id="mediAyurChat" class="chat-section medi-ayur-bg hidden" role="region" aria-label="MediAyur Chat">
+    <div class="text-center mb-4">
+      <h2 class="text-3xl font-bold text-gray-800">MediAyur</h2>
+      <p class="text-gray-600">Holistic Ayurvedic healing</p>
+    </div>
+    <div id="mediAyurMessages" class="chat-messages" tabindex="0"></div>
+    <form id="mediAyurForm" class="flex" aria-label="Send message to MediAyur">
+      <textarea id="mediAyurInput" class="flex-grow border border-gray-300 rounded-l-lg px-4 py-2 focus:outline-none focus:ring focus:ring-green-300" placeholder="Type your Ayurvedic query..." rows="1" required></textarea>
+      <button type="submit" class="bg-green-500 hover:bg-green-600 text-white px-6 py-2 rounded-r-lg font-semibold">Send</button>
+    </form>
+    <div class="mt-4">
+      <small class="text-gray-500">Disclaimer: This is for informational purposes only. Consult an Ayurvedic practitioner.</small>
+    </div>
+  </section>
+
+  <!-- About Us Section -->
+  <section id="aboutUs" tabindex="-1" aria-label="About Us Section">
+    <h3>About Us</h3>
+    <p>Our Medical Bots Portal was created with a heartfelt mission: to empower elderly individuals and anyone seeking easy, accessible health support. We understand that navigating healthcare can be overwhelming, especially for older adults. That’s why we designed this platform with simple, intuitive options and quick access to nearby hospitals, ensuring help is always within reach.</p>
+    <p>This platform works completely free and without any login or charges. We help elders and those who cannot afford doctors, providing a no-barrier way to get health advice.</p>
+    <p>Because of the side effects of some medicines, we created MediAyur for natural healing, while MediAid caters to those who trust modern medicine. Our vision is to bridge the gap between technology and traditional wellness, making healthcare inclusive and compassionate.</p>
+  </section>
+
+  <!-- Creators Section -->
+  <section id="creators" tabindex="-1" aria-label="Creators Section">
+    <h3>Creators</h3>
+    <div class="creator-box">
+      <h4>Ayush Bhat</h4>
+      <p>Ayush Bhat is a passionate frontend developer with a keen interest in creating user-friendly and accessible web interfaces. He expects this project to revolutionize healthcare accessibility by leveraging AI and natural remedies. We created this to address the growing need for affordable health guidance, especially for underserved communities.</p>
+    </div>
+    <div class="creator-box">
+      <h4>Prachi Khajuria</h4>
+      <p>Prachi Khajuria specializes in backend development and AI integration, focusing on robust and scalable systems. She anticipates this platform will empower users globally with reliable health information. The project was born out of our shared goal to combat healthcare disparities and provide free, inclusive solutions.</p>
+    </div>
+  </section>
+
+  <!-- Vision Section -->
+  <section id="vision" tabindex="-1" aria-label="Vision Section">
+    <h3>Vision</h3>
+    <p>Our vision is to create a global hub for health awareness through technology, combining AI-driven insights with Ayurvedic wisdom. We aim to foster a healthier world by making information accessible to all, reducing barriers to care, and promoting natural and sustainable healing practices.</p>
+    <p>Through MediAid and MediAyur, we envision a future where individuals can confidently manage their health without financial or logistical hurdles, embracing both modern medicine and traditional remedies for holistic well-being.</p>
+  </section>
+
+  <!-- Comment / Review Section -->
+  <section class="comment-section" aria-label="Leave a Review">
+    <h4>Leave a Review or Comment</h4>
+    <form id="commentForm">
+      <input type="text" id="commentInput" placeholder="Type your comment here..." required />
+      <button type="submit">Submit</button>
+    </form>
+    <div id="commentList" class="comment-list" aria-live="polite" aria-relevant="additions"></div>
+  </section>
+
+  <script>
+    function loadPage(page) {
+      const iframe = document.getElementById('contentFrame');
+      iframe.src = page;
+      iframe.scrollIntoView({ behavior: 'smooth' });
+    }
+
+    function showChat(bot) {
+      document.getElementById('mediAidChat').classList.add('hidden');
+      document.getElementById('mediAyurChat').classList.add('hidden');
+      document.getElementById(bot + 'Chat').classList.remove('hidden');
+      document.getElementById(bot + 'Chat').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    function findHospitals() {
+      window.open('https://www.google.com/search?q=nearby+hospitals&tbm=lcl', '_blank');
+    }
+
+    // MediAid Chat
+    document.getElementById('mediAidForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const input = document.getElementById('mediAidInput').value.trim();
+      if (!input) return;
+      addMessage('mediAidMessages', input, 'user');
+      document.getElementById('mediAidInput').value = '';
+      setTimeout(() => {
+        const response = getMediAidResponse(input);
+        addMessage('mediAidMessages', response, 'bot');
+      }, 1000);
+    });
+
+    // MediAyur Chat
+    document.getElementById('mediAyurForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const input = document.getElementById('mediAyurInput').value.trim();
+      if (!input) return;
+      addMessage('mediAyurMessages', input, 'user');
+      document.getElementById('mediAyurInput').value = '';
+      setTimeout(() => {
+        const response = getMediAyurResponse(input);
+        addMessage('mediAyurMessages', response, 'bot');
+      }, 1000);
+    });
+
+    function addMessage(containerId, text, type) {
+      const container = document.getElementById(containerId);
+      const message = document.createElement('div');
+      message.className = `message ${type}`;
+      message.textContent = type === 'user' ? 'You: ' + text : type === 'bot' ? (containerId.includes('Ayur') ? 'MediAyur: ' : 'MediAid: ') + text : text;
+      container.appendChild(message);
+      container.scrollTop = container.scrollHeight;
+    }
+
+    function getMediAidResponse(userInput) {
+      const lower = userInput.toLowerCase();
+      if (lower.includes('headache')) return 'Headaches can have various causes. Stay hydrated and rest. If persistent, see a doctor for evaluation.';
+      if (lower.includes('fever')) return 'A fever indicates your body is fighting infection. Monitor it and consult a healthcare professional if it exceeds 101°F.';
+      return 'Thank you for your query. For accurate advice, provide more details or visit a medical professional.';
+    }
+
+    function getMediAyurResponse(userInput) {
+      const lower = userInput.toLowerCase();
+      if (lower.includes('dosha')) return 'Ayurveda identifies three doshas: Vata, Pitta, Surya. Determine your predominant dosha for personalized recommendations.';
+      if (lower.includes('herb')) return 'Common Ayurvedic herbs include turmeric for immunity, neem for detoxification. Consult a practitioner for safe use.';
+      return 'For Ayurvedic guidance, share more about your concerns. Remedies focus on balance and natural healing.';
+    }
+
+    // Auto-resize textareas
+    document.getElementById('mediAidInput').addEventListener('input', function() {
+      this.style.height = 'auto';
+      this.style.height = this.scrollHeight + 'px';
+    });
+    document.getElementById('mediAyurInput').addEventListener('input', function() {
+      this.style.height = 'auto';
+      this.style.height = this.scrollHeight + 'px';
+    });
+
+    // Handle comment form submission
+    document.getElementById('commentForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const input = document.getElementById('commentInput');
+      const comment = input.value.trim();
+      if (!comment) return;
+      const commentList = document.getElementById('commentList');
+      const commentItem = document.createElement('div');
+      commentItem.className = 'comment-item';
+      commentItem.textContent = comment;
+      commentList.appendChild(commentItem);
+      input.value = '';
+      input.focus();
+      commentList.scrollTop = commentList.scrollHeight;
+    });
+  </script>
+</body>
+</html>

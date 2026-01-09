@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Medicine Store</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<style>
+body {font-family:Arial;background:#f2f7ff;margin:0;}
+header {
+  background:#2563eb;
+  color:white;
+  padding:15px 20px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+.cart-badge {
+  background:red;
+  padding:5px 10px;
+  border-radius:20px;
+  font-size:14px;
+}
+.container {max-width:1100px;margin:auto;padding:20px;}
+
+.medicine-grid {
+  display:grid;
+  grid-template-columns: repeat(auto-fit,minmax(230px,1fr));
+  gap:20px;
+}
+
+.card {
+  background:white;
+  padding:15px;
+  border-radius:10px;
+  text-align:center;
+  box-shadow:0 4px 10px rgba(0,0,0,0.1);
+}
+
+.card img {
+  width:150px;
+  height:150px;
+  object-fit:contain;
+}
+
+button {
+  background:#2563eb;
+  color:white;
+  border:none;
+  padding:7px 12px;
+  border-radius:5px;
+  cursor:pointer;
+}
+
+button:hover {background:#1d4ed8;}
+
+.cart-box {
+  margin-top:30px;
+  background:white;
+  padding:20px;
+  border-radius:10px;
+  box-shadow:0 4px 10px rgba(0,0,0,0.1);
+}
+
+.cart-item {
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin:10px 0;
+}
+
+.qty-btn {padding:2px 8px;margin:0 5px;}
+.remove-btn {background:#dc2626;}
+
+input, textarea {
+  width:100%;
+  padding:8px;
+  margin:6px 0;
+}
+
+.hidden {display:none;}
+.qr-img {width:180px;display:block;margin:auto;}
+</style>
+</head>
+
+<body>
+
+<header>
+  <h2>💊 Online Medicine Store</h2>
+  <div>Cart Items: <span class="cart-badge" id="cartCount">0</span></div>
+</header>
+
+<div class="container">
+
+<!-- MEDICINES -->
+<div class="medicine-grid" id="medicineList"></div>
+
+<!-- CART -->
+<div class="cart-box">
+<h2>🛒 Review Your Cart</h2>
+<div id="cartItems"></div>
+
+<p><strong>Subtotal:</strong> ₹<span id="subtotal">0</span></p>
+<p><strong>Delivery:</strong> ₹40</p>
+<p><strong>Total:</strong> ₹<span id="total">0</span></p>
+
+<h3>📍 Delivery Address</h3>
+<textarea id="address" placeholder="Enter your full address"></textarea>
+
+<h3>💳 Payment Method</h3>
+<label>
+  <input type="radio" name="payment" value="cod" checked> Cash on Delivery
+</label><br>
+
+<label>
+  <input type="radio" name="payment" value="online"> Pay Online
+</label>
+
+<!-- ONLINE PAYMENT BOX -->
+<div id="qrBox" class="hidden">
+  <p><strong>Pay Online</strong></p>
+  <p>Scan the QR and complete your payment:</p>
+
+  <!-- SIMPLE QR IMAGE -->
+  <img src="Images/qr.png" width="180">
+
+  <label>
+    <input type="checkbox" id="paymentDone">
+    Payment completed
+  </label>
+</div>
+
+
+
+<br>
+<button onclick="placeOrder()">Place Order</button>
+<p id="orderMsg"></p>
+
+</div>
+</div>
+
+<script>
+const medicines = [
+ {id:1, name:"Paracetamol", price:30, img:"Images/para.jpg", desc:"Relieves mild to moderate pain and reduces fever."},
+ {id:2, name:"Aspirin", price:50, img:"Images/aspirin.jpg", desc:"Used for pain relief, fever, and heart protection."},
+ {id:3, name:"Vomikind", price:60, img:"Images/vomikind.jpg", desc:"Prevents nausea and vomiting."},
+ {id:4, name:"Crocin", price:40, img:"Images/crocin.jpg", desc:"Helps reduce fever and body pain."},
+ {id:5, name:"Vitamin D3", price:120, img:"Images/vitd3.jpg", desc:"Supports bone strength and immunity."},
+
+ {id:6, name:"Brufen", price:55, img:"Images/brufen.jpg", desc:"Reduces pain, swelling, and inflammation."},
+ {id:7, name:"Azithromycin", price:150, img:"Images/azithro.jpg", desc:"Antibiotic for bacterial infections."},
+ {id:8, name:"Cetrizine", price:35, img:"Images/cetrizine.jpg", desc:"Relieves allergy symptoms like sneezing and itching."},
+ {id:9, name:"Pantoprazole", price:80, img:"Images/pantoprazole.jpg", desc:"Controls acidity and stomach ulcers."},
+ {id:10, name:"Digene", price:90, img:"Images/digene.jpg", desc:"Provides quick relief from indigestion and gas."},
+
+ {id:11, name:"ORS Powder", price:25, img:"Images/ors.jpg", desc:"Prevents dehydration and restores electrolytes."},
+ {id:12, name:"Becosules", price:110, img:"Images/becosules.jpg", desc:"Vitamin supplement for energy and immunity."},
+ {id:13, name:"Neurobion Forte", price:140, img:"Images/neurobion.jpg", desc:"Improves nerve health and energy levels."},
+ {id:14, name:"Vicks Vaporub", price:95, img:"Images/vicks.jpg", desc:"Relieves cold, cough, and nasal congestion."},
+ {id:15, name:"Sinarest", price:70, img:"Images/sinarest.jpg", desc:"Used for cold, sinus pain, and headache."},
+
+ {id:16, name:"Calpol 650", price:45, img:"Images/calpol.jpg", desc:"Effective fever and pain reliever."},
+ {id:17, name:"Disprin", price:20, img:"Images/disprin.jpg", desc:"Fast pain relief and headache treatment."},
+ {id:18, name:"Dolo 650", price:50, img:"Images/dolo.jpg", desc:"Used for fever, body ache, and flu symptoms."},
+ {id:19, name:"Meftal Spas", price:75, img:"Images/meftal.jpg", desc:"Relieves menstrual cramps and abdominal pain."},
+ {id:20, name:"Zincovit", price:130, img:"Images/zincovit.jpg", desc:"Boosts immunity and supports recovery."},
+
+ {id:21, name:"Benadryl Syrup", price:110, img:"Images/benadryl.jpg", desc:"Provides relief from cough and throat irritation."},
+ {id:22, name:"Gelusil", price:85, img:"Images/gelusil.jpg", desc:"Treats acidity, heartburn, and indigestion."},
+ {id:23, name:"Liv 52", price:160, img:"Images/liv52.jpg", desc:"Supports liver health and digestion."},
+ {id:24, name:"ENO Fruit Salt", price:60, img:"Images/eno.jpg", desc:"Instant relief from acidity and gas."},
+ {id:25, name:"Electral Powder", price:40, img:"Images/electral.jpg", desc:"Rehydrates during diarrhea and heat exhaustion."},
+
+ {id:26, name:"Revital H", price:170, img:"Images/revital.jpg", desc:"Daily multivitamin for stamina and strength."},
+ {id:27, name:"Strepsils", price:65, img:"Images/strepsils.jpg", desc:"Soothes sore throat and throat infection."},
+ {id:28, name:"Volini Spray", price:190, img:"Images/volini.jpg", desc:"Relieves muscle and joint pain."},
+ {id:29, name:"Moov Pain Relief", price:180, img:"Images/moov.jpg", desc:"Topical gel for muscle pain relief."},
+ {id:30, name:"Antacid Tablets", price:55, img:"Images/antacid.jpg", desc:"Neutralizes stomach acid and relieves heartburn."}
+];
+
+
+let cart = {};
+const delivery = 40;
+
+function loadMedicines(){
+ const list = document.getElementById("medicineList");
+ medicines.forEach(m=>{
+   list.innerHTML += `
+   <div class="card">
+     <img src="${m.img}">
+     <h3>${m.name}</h3>
+     <p>₹${m.price}</p>
+     <button onclick="addToCart(${m.id})">Add to Cart</button>
+   </div>`;
+ });
+}
+
+function addToCart(id){
+ if(cart[id]) cart[id].qty++;
+ else {
+   const med = medicines.find(m=>m.id===id);
+   cart[id] = {...med, qty:1};
+ }
+ renderCart();
+}
+
+function changeQty(id, delta){
+ cart[id].qty += delta;
+ if(cart[id].qty <= 0) delete cart[id];
+ renderCart();
+}
+
+function removeItem(id){
+ delete cart[id];
+ renderCart();
+}
+
+function renderCart(){
+ const cartBox = document.getElementById("cartItems");
+ cartBox.innerHTML = "";
+ let subtotal = 0;
+ let count = 0;
+
+ Object.values(cart).forEach(item=>{
+   subtotal += item.price * item.qty;
+   count += item.qty;
+
+   cartBox.innerHTML += `
+   <div class="cart-item">
+     <span>${item.name}</span>
+     <div>
+       <button class="qty-btn" onclick="changeQty(${item.id},-1)">-</button>
+       ${item.qty}
+       <button class="qty-btn" onclick="changeQty(${item.id},1)">+</button>
+       ₹${item.price * item.qty}
+       <button class="remove-btn" onclick="removeItem(${item.id})">X</button>
+     </div>
+   </div>`;
+ });
+
+ document.getElementById("subtotal").innerText = subtotal;
+ document.getElementById("total").innerText = subtotal + delivery;
+ document.getElementById("cartCount").innerText = count;
+}
+
+// Toggle QR visibility
+document.querySelectorAll("input[name='payment']").forEach(r=>{
+ r.addEventListener("change",()=>{
+   const qrBox = document.getElementById("qrBox");
+   qrBox.classList.toggle("hidden", r.value !== "online");
+   document.getElementById("paymentDone").checked = false;
+ });
+});
+
+function placeOrder(){
+ const paymentMode = document.querySelector("input[name='payment']:checked").value;
+ const address = document.getElementById("address").value.trim();
+ const paymentDone = document.getElementById("paymentDone").checked;
+
+ if(Object.keys(cart).length === 0){
+   alert("Please add medicines first.");
+   return;
+ }
+
+ if(!address){
+   alert("Enter delivery address.");
+   return;
+ }
+
+ if(paymentMode === "online" && !paymentDone){
+   alert("Please complete payment and confirm before placing order.");
+   return;
+ }
+
+ document.getElementById("orderMsg").innerHTML =
+ "✅ Order placed successfully! Your medicines will be delivered soon.";
+
+ cart = {};
+ renderCart();
+ document.getElementById("address").value="";
+ document.getElementById("paymentDone").checked = false;
+}
+
+loadMedicines();
+</script>
+
+</body>
+</html>

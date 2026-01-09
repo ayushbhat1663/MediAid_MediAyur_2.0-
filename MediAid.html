@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>MediAid - AI Chatbot</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Inter', sans-serif;
+      background: #f0f4f8;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    header {
+      width: 100%;
+      position: relative;
+      background: url('https://images.unsplash.com/photo-1588776814546-0a3a3a7a7a7a?ixlib=rb-4.0.3&auto=format&fit=crop&w=1470&q=80') no-repeat center center/cover;
+      color: white;
+      padding: 5rem 1rem 6rem;
+      text-align: center;
+      box-shadow: inset 0 0 0 1000px rgba(0, 64, 128, 0.75);
+      overflow: hidden;
+    }
+    /* Subtle hospital equipment images in top corners */
+    header::before,
+    header::after {
+      content: "";
+      position: absolute;
+      top: 2rem;
+      width: 140px;
+      height: 140px;
+      background-size: contain;
+      background-repeat: no-repeat;
+      opacity: 0.15;
+      pointer-events: none;
+      z-index: 0;
+    }
+    /* Hospital microscope image on left */
+    header::before {
+      left: 2rem;
+      background-image: url('https://images.unsplash.com/photo-1580281657521-3a3a3a3a3a3a?ixlib=rb-4.0.3&auto=format&fit=crop&w=140&q=80');
+      background-position: center;
+    }
+    /* Hospital stethoscope image on right */
+    header::after {
+      right: 2rem;
+      background-image: url('https://images.unsplash.com/photo-1580281657522-4b4b4b4b4b4b?ixlib=rb-4.0.3&auto=format&fit=crop&w=140&q=80');
+      background-position: center;
+    }
+    header h1 {
+      font-size: 3rem;
+      font-weight: 900;
+      margin: 0 0 0.5rem;
+      position: relative;
+      z-index: 1;
+      text-shadow: 0 3px 8px rgba(0,0,0,0.7);
+    }
+    header p {
+      font-size: 1.25rem;
+      font-weight: 500;
+      margin: 0 0 1.5rem;
+      position: relative;
+      z-index: 1;
+      text-shadow: 0 2px 6px rgba(0,0,0,0.6);
+      max-width: 600px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .back-link {
+      position: relative;
+      z-index: 1;
+      display: inline-flex;
+      align-items: center;
+      margin-bottom: 2rem;
+      color: #cce4ff;
+      font-weight: 600;
+      font-size: 1rem;
+      padding: 0.5rem 1rem;
+      border-radius: 9999px;
+      background: rgba(255 255 255 / 0.15);
+      text-decoration: none;
+      transition: background-color 0.3s ease;
+      gap: 0.5rem;
+    }
+    .back-link:hover {
+      background: rgba(255 255 255 / 0.3);
+    }
+    .back-link svg {
+      width: 20px;
+      height: 20px;
+      stroke: currentColor;
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      fill: none;
+    }
+    main.chat-container {
+      background: white;
+      max-width: 1000px;
+      width: 100%;
+      margin: -6rem auto 3rem;
+      border-radius: 20px;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+      padding: 2rem 2.5rem 3rem;
+      text-align: center;
+      position: relative;
+      z-index: 10;
+    }
+    main.chat-container h2 {
+      font-size: 2.25rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+      color: #004080;
+    }
+    main.chat-container p {
+      font-size: 1.125rem;
+      color: #475569;
+      margin-bottom: 2rem;
+      max-width: 700px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .chatbot-wrapper {
+      width: 100%;
+      height: 700px;
+      border-radius: 15px;
+      overflow: hidden;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+      border: 2px solid #004080;
+    }
+    iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
+    .disclaimer {
+      margin-top: 1.75rem;
+      font-size: 0.875rem;
+      color: #64748b;
+      font-style: italic;
+    }
+    /* Responsive */
+    @media (max-width: 768px) {
+      header {
+        padding: 3rem 1rem 4rem;
+      }
+      header h1 {
+        font-size: 2.25rem;
+      }
+      header p {
+        font-size: 1rem;
+      }
+      main.chat-container {
+        margin: -4rem 1rem 2rem;
+        padding: 1.5rem 1.5rem 2rem;
+      }
+      .chatbot-wrapper {
+        height: 500px;
+      }
+      header::before,
+      header::after {
+        width: 100px;
+        height: 100px;
+        top: 1rem;
+      }
+      header::before {
+        left: 1rem;
+      }
+      header::after {
+        right: 1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <a href="index.html" class="back-link" aria-label="Back to home">
+      <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+        <polyline points="15 18 9 12 15 6"></polyline>
+      </svg>
+      Back to Home
+    </a>
+    <h1>MediAid</h1>
+    <p>AI-powered medical guidance providing quick, reliable responses to your health questions.</p>
+  </header>
+
+  <main class="chat-container" role="main" aria-label="MediAid AI Chatbot">
+    <h2>AI Chatbot Assistance</h2>
+    <p>Engage with the MediAid Chatbot to get personalized, AI-driven medical advice. Bot responses are for informational purposes only.</p>
+    <div class="chatbot-wrapper">
+      <iframe
+        src="https://www.chatbase.co/chatbot-iframe/_Z9uJrhxoPAFcM4PwAu19"
+        style="height: 100%; min-height: 700px"
+        frameborder="0"
+        title="MediAid AI Chatbot"
+        aria-label="MediAid AI Chatbot iframe"
+      ></iframe>
+    </div>
+    <div class="disclaimer">
+      <small>Disclaimer: This bot provides general advice. Consult a doctor for personalized care.</small>
+    </div>
+  </main>
+</body>
+</html>
